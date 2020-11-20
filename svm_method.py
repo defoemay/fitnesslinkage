@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.svm import SVC
 import os
 
-def SVM_method_N(x_data, y_data, N, kernel='rbf', C=1, gamma=0.5, n_iters=1000):
+def SVM_method_N(x_data, y_data, N, kernel='rbf', C=1, gamma=0.5, n_iters=1000, eps=0.1):
     n_correct = 0
     for i in range(n_iters):
         idx = np.random.choice(len(x_data), N, replace=False) # choose N users at random
@@ -13,7 +13,11 @@ def SVM_method_N(x_data, y_data, N, kernel='rbf', C=1, gamma=0.5, n_iters=1000):
         y = y_batch[j_c]
 
         # normalize the features
-        stddev = np.sqrt(np.diagonal(np.cov(np.transpose(np.concatenate(x_data)))))
+        if len(x_batch[0].shape) > 1 and x_batch[0].shape[0] != 1 and x_batch[0].shape[1] != 1:
+            stddev = np.sqrt(np.diagonal(np.cov(np.transpose(np.concatenate(x_batch)))))
+        else:
+            stddev = np.std(np.concatenate(x_batch))
+        stddev += eps
         x_batch = [x/stddev for x in x_batch]
         y = y/stddev
 
