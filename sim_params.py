@@ -3,8 +3,10 @@ import os
 data_dir = "data"
 results_dir = "results"
 
-filepath1 = os.path.join(data_dir, "month1.csv")
-filepath2 = os.path.join(data_dir, "month2.csv")
+pmdata_dir = os.path.join(data_dir, 'pmdata')
+
+filepath1_ds1 = os.path.join(data_dir, "month1.csv")
+filepath2_ds1 = os.path.join(data_dir, "month2.csv")
 
 
 rng_seed = 1164
@@ -12,11 +14,11 @@ n_iters = 1000
 
 # -------------------------------------------------------- #
 
-N_max = 20
+N_max = 16
 
 #attributes = ['steps']
-#attributes = ['calories']
-attributes = ['steps', 'calories']
+attributes = ['calories']
+#attributes = ['steps', 'calories']
 
 # -------------------------------------------------------- #
 
