@@ -5,7 +5,7 @@ __pycache__/
 oldcode/
 
 # PMData Dataset
-pmdata/
+#pmdata/
 #pmdata/*
 
 # Jupyter notebooks
