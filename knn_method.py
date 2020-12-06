@@ -52,19 +52,13 @@ if __name__ == '__main__':
     import pandas as pd
     import matplotlib.pyplot as plt
     pd.options.mode.chained_assignment = None  # default='warn'
-    from preprocess import preprocess_dfs
+    from preprocess_ds1 import preprocess_ds1
 
     n_neighbors = 2
     N_max = 20
     n_iters = 1000
 
-    datapath = "data"
-    filepath1 = os.path.join(datapath, "month1.csv")
-    filepath2 = os.path.join(datapath, "month2.csv")
-
-    df1 = pd.read_csv(filepath1)
-    df2 = pd.read_csv(filepath2)
-    x_data, y_data = preprocess_dfs(df1, df2)
+    x_data, y_data = preprocess_ds1()
 
     accuracy = run_kNN_method(x_data, y_data, n_neighbors=n_neighbors, N_max=N_max, n_iters=n_iters)
 

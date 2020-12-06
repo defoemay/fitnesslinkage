@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import sim_params as pm
 
-def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=-1):
+def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=0.5, q=-1):
 
     def keep_common_ids(df1, df2):
         ids1 = df1['id'].unique()
@@ -24,9 +24,11 @@ def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=-1):
             q = 1-p
         df2.index = df2.index + df1.shape[0]
         df = pd.concat([df1, df2]).sort_values(by=['date', 'id'])
-        i_split = int(p*df.shape[0])
-        df1 = df.iloc[:i_split, :]
-        df2 = df.iloc[i_split:, :]
+        T = df.shape[0] # number of samples per user
+        i1 = int(p*T)
+        i2 = max(i1, int((1-q)*T))
+        df1 = df.iloc[:i1, :]
+        df2 = df.iloc[i2:, :]
         return keep_common_ids(df1, df2)
 
     # rename the columns
@@ -39,7 +41,7 @@ def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=-1):
 
     # if p is in [0,1], split the dataset
     if p > 0 and p < 1:
-        df1, df2 = split_p(df1, df2, p)
+        df1, df2 = split_pq(df1, df2, p, q)
 
     x_data = get_samples(df1, attributes) # data from the first month
     y_data = get_samples(df2, attributes) # data from the second month
