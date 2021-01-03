@@ -12,14 +12,25 @@ def SVM_method_N(x_data, y_data, N, kernel='rbf', C=1, gamma=0.5, n_iters=1000, 
         y_batch = y_data[idx]
         y = y_batch[j_c]
 
-        # normalize the features
-        if len(x_batch[0].shape) > 1 and x_batch[0].shape[0] != 1 and x_batch[0].shape[1] != 1:
-            stddev = np.sqrt(np.diagonal(np.cov(np.transpose(np.concatenate(x_batch)))))
-        else:
-            stddev = np.std(np.concatenate(x_batch))
-        stddev += eps
-        x_batch = [x/stddev for x in x_batch]
-        y = y/stddev
+        def normalize_std(x_batch, y):
+            if len(x_batch[0].shape) > 1 and x_batch[0].shape[0] != 1 and x_batch[0].shape[1] != 1:
+                stddev = np.sqrt(np.diagonal(np.cov(np.transpose(np.concatenate(x_batch)))))
+            else:
+                stddev = np.std(np.concatenate(x_batch))
+            stddev += eps
+            x_batch = [x/stddev for x in x_batch]
+            y = y/stddev
+            return x_batch, y
+
+        def normalize_bound(x_batch, y):
+            xmax = np.max(np.concatenate(x_batch), axis=0)
+            xmin = np.min(np.concatenate(x_batch), axis=0)
+            x_batch = [(x-xmin)/(xmax-xmin) for x in x_batch]
+            y = (y-xmin)/(xmax-xmin)
+            return x_batch, y
+
+        #x_batch, y = normalize_bound(x_batch, y)
+        x_batch, y = normalize_std(x_batch, y)
 
         X = np.vstack(x_batch)
 
@@ -55,7 +66,7 @@ if __name__ == '__main__':
     from preprocess_ds1 import preprocess_ds1
 
     kernel='rbf'
-    C=1e5
+    C=1e2
     N_max = 20
     n_iters = 1000
 

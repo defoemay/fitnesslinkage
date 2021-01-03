@@ -6,7 +6,7 @@ import os
 from time import time
 
 from preprocess_ds1 import preprocess_ds1
-from preprocess_pmd import preprocess_pmd
+from preprocess_ds2 import preprocess_ds2
 from svm_method import run_SVM_method
 from knn_method import run_kNN_method
 from kde_method import run_KDE_method
@@ -36,11 +36,11 @@ if __name__ == "__main__":
 
     attr_str = '_'.join(attributes)
 
-    if DATASET == "pmdata":
-        x_data, y_data = preprocess_pmd(attributes=attributes)
+    if DATASET in ["ds2", "DS2", "pmd", "PMD"]:
+        preprocess = preprocess_ds2
     else:
-        x_data, y_data = preprocess_ds1(attributes=attributes)
-    #print(x_data)
+        preprocess = preprocess_ds1
+    x_data, y_data = preprocess(attributes=attributes)
     accuracy = test_methods(x_data, y_data, N_max=N_max)
     #print(accuracy)
 

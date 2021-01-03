@@ -31,6 +31,19 @@ def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=0.5, q=-1):
         df2 = df.iloc[i2:, :]
         return keep_common_ids(df1, df2)
 
+    def find_idx_bad(x_data):
+        Tmax = max([len(x) for x in x_data])
+        return [i for i,x in enumerate(x_data) if len(x)<0.5*Tmax]
+
+    def remove_bad_data(x_data, y_data):
+        idx_badx = find_idx_bad(x_data)
+        idx_bady = find_idx_bad(y_data)
+
+        idx_good = list(set(range(len(x_data)))-set(idx_badx)-set(idx_bady))
+        x_data = x_data[idx_good]
+        y_data = y_data[idx_good]
+        return x_data, y_data
+
     # rename the columns
     df1.columns = ['id', 'date', 'steps', 'distance', 'td', 'ld', 'distance3', 'distance2', 'distance1', 'distance0',
               'minutes3', 'minutes2', 'minutes1', 'minutes0', 'calories']
@@ -45,6 +58,12 @@ def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=0.5, q=-1):
 
     x_data = get_samples(df1, attributes) # data from the first month
     y_data = get_samples(df2, attributes) # data from the second month
+
+    x_data = x_data[:29]
+    y_data = y_data[:29]
+
+    #x_data, y_data = remove_bad_data(x_data, y_data)
+
     return x_data, y_data
 
 def preprocess_ds1(attributes=['steps', 'calories'], p=0.5, q=-1):

@@ -20,8 +20,20 @@ def split_pq(df, p, q):
 def remove_rows_zero(df):
     return df[(df.T != 0).all()]
 
-def preprocess_pmd(attributes=['steps', 'calories'], p=0.5, q=-1):
+def find_idx_bad(x_data):
+    Tmax = max([len(x) for x in x_data])
+    return [i for i,x in enumerate(x_data) if len(x)<0.5*Tmax]
 
+def remove_bad_data(x_data, y_data):
+    idx_badx = find_idx_bad(x_data)
+    idx_bady = find_idx_bad(y_data)
+
+    idx_good = list(set(range(len(x_data)))-set(idx_badx)-set(idx_bady))
+    x_data = x_data[idx_good]
+    y_data = y_data[idx_good]
+    return x_data, y_data
+
+def preprocess_ds2(attributes=['steps', 'calories'], p=0.5, q=-1):
 
     pmdata_dir = pm.pmdata_dir
 
@@ -41,4 +53,12 @@ def preprocess_pmd(attributes=['steps', 'calories'], p=0.5, q=-1):
         data_train.append(df1[attributes].values)
         data_test.append(df2[attributes].values)
 
-    return np.array(data_train), np.array(data_test)
+    x_data = np.array(data_train)
+    y_data = np.array(data_test)
+
+    idx_keep = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    x_data = x_data[idx_keep]
+    y_data = y_data[idx_keep]
+    #x_data, y_data = remove_bad_data(x_data, y_data)
+
+    return x_data, y_data
