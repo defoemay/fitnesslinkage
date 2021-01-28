@@ -1,10 +1,12 @@
 clc, close, clear;
 
 save_tex = true;
-custom_ts = true;
+custom_ts = false;
 
 
-features = ["steps","calories"];
+%features = ["steps","calories"];
+%features = ["steps"];
+features = ["calories"];
 resultspath = fullfile('..', 'results', join(features, '_'));
 
 if custom_ts
@@ -16,7 +18,8 @@ else
     for i = 3:size(timestamps,1)
         ts(i) = str2double(timestamps(i).name);
     end
-    resultspath = fullfile(resultspath, num2str(max(ts)));
+    max_ts = max(max(ts));
+    resultspath = fullfile(resultspath, num2str(max_ts));
 end
 
 addpath(resultspath);
@@ -33,6 +36,7 @@ gamma = str2double(A(names == 'gamma', 4).Var4{1});
 bandwidth = str2double(A(names == 'bandwidth', 4).Var4{1});
 
 accuracy_kNN = importdata("accuracy_kNN.csv");
+accuracy_RF = importdata("accuracy_RF.csv");
 accuracy_SVM = importdata("accuracy_SVM.csv");
 accuracy_KDE = importdata("accuracy_KDE.csv");
 
@@ -41,10 +45,16 @@ N_range = 1:1:length(accuracy_kNN);
 figure(1);
 set(0,'defaultTextInterpreter','latex');
 set(gcf,'Position', [480, 320, 480, 320]);
-str_kNN = strcat("", 'kNN, k=', num2str(n_neighbors));
-str_SVM = strcat("", 'SVM, C=10^', num2str(floor(log10(C))),', \gamma=', num2str(gamma));
-str_KDE = strcat("", 'KDE, h=', num2str(bandwidth));
+%str_kNN = strcat("", 'kNN, k=', num2str(n_neighbors));
+%str_SVM = strcat("", 'SVM, C=10^', num2str(floor(log10(C))),', \gamma=', num2str(gamma));
+%str_KDE = strcat("", 'KDE, h=', num2str(bandwidth));
+str_kNN = "kNN";
+str_RF = "RF";
+str_SVM = "SVM";
+str_KDE = "KDE";
 plot(N_range, accuracy_kNN, '.-', 'DisplayName', str_kNN);
+hold on;
+plot(N_range, accuracy_RF, '.-', 'DisplayName', str_RF);
 hold on;
 plot(N_range, accuracy_SVM, '.-', 'DisplayName', str_SVM);
 hold on;

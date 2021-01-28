@@ -7,18 +7,16 @@ from time import time
 
 from preprocess_ds1 import preprocess_ds1
 from preprocess_ds2 import preprocess_ds2
-from svm_method import run_SVM_method
-from knn_method import run_kNN_method
-from kde_method import run_KDE_method
+from all_methods import majority_method
 import sim_params as pm
 
 
-def test_methods(x_data, y_data, N_max):
+def test_methods(x_data, y_data, hparams_list, N_max):
     accuracy = {}
     accuracy['naive'] = np.array([1/n for n in range(1, N_max+1)])
-    accuracy['kNN'] = run_kNN_method(x_data, y_data, n_neighbors=pm.n_neighbors, N_max=N_max)
-    accuracy['SVM'] = run_SVM_method(x_data, y_data, kernel=pm.kernel, C=pm.C, gamma=pm.gamma, N_max=N_max)
-    accuracy['KDE'] = run_KDE_method(x_data, y_data, bandwidth=pm.bandwidth, N_max=N_max)
+    for hh, hparams in enumerate(hparams_list):
+        accuracy[hparams['method']] = majority_method(x_data, y_data,
+            hparams, N_max=N_max, n_iters=pm.n_iters)
 
     return accuracy
 
@@ -41,16 +39,26 @@ if __name__ == "__main__":
     else:
         preprocess = preprocess_ds1
     x_data, y_data = preprocess(attributes=attributes)
-    accuracy = test_methods(x_data, y_data, N_max=N_max)
+
+    hparams_list = [{'method':'kNN', 'n_neighbors': pm.n_neighbors},
+                    {'method':'RF', 'n_estimators': pm.n_estimators},
+                    {'method':'SVM', 'C':pm.gamma, 'gamma':pm.gamma},
+                    {'method':'KDE', 'bandwidth':pm.bandwidth}]
+
+
+    to_write = {"DATASET": DATASET, "seed": rng_seed, "N_max": N_max,
+            "kNN - n_neighbors": pm.n_neighbors, "RF - n_estimators": pm.n_estimators,
+            "SVM - kernel":pm.kernel, "SVM - C":pm.C, "SVM - gamma":pm.gamma,
+            "KDE - bandwidth":pm.bandwidth}
+
+    accuracy = test_methods(x_data, y_data, hparams_list, N_max=N_max)
     #print(accuracy)
 
     results_path = os.path.join(pm.results_dir, attr_str, str(int(time())))
     if not os.path.exists(results_path):
         os.makedirs(results_path)
 
-    to_write = {"DATASET": DATASET, "seed": rng_seed, "N_max": N_max,
-            "kNN - n_neighbors": pm.n_neighbors, "SVM - kernel":pm.kernel,
-            "SVM - C":pm.C, "SVM - gamma":pm.gamma, "KDE - bandwidth":pm.bandwidth}
+
 
     with open(os.path.join(results_path, 'params.txt'), 'w+') as f:
         for key, value in to_write.items():

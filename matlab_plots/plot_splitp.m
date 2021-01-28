@@ -2,12 +2,27 @@ clc, close, clear;
 
 N = 20;
 save_tex = true;
+custom_ts = false;
 
-resultspath = fullfile('..', 'results', 'split_p');
+resultspath = fullfile('..', 'results', 'split_pq');
+
+if custom_ts
+    resultspath = fullfile(resultspath, "1607220075");
+else    
+    resultsdir = dir(resultspath);
+    timestamps = resultsdir([resultsdir.isdir]);
+    ts = zeros(size(timestamps,1)-2);
+    for i = 3:size(timestamps,1)
+        ts(i) = str2double(timestamps(i).name);
+    end
+    max_ts = max(max(ts));
+    resultspath = fullfile(resultspath, num2str(max_ts));
+end
 
 addpath(resultspath);
 
-acc = importdata(strcat('accuracy_N', num2str(N), '.csv'));
+filepath = fullfile(resultspath, 'accuracy.csv');
+acc = importdata(filepath);
 
 p_range = acc(:, 1);
 

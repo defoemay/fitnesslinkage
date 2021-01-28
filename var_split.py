@@ -6,9 +6,7 @@ from time import time
 
 from preprocess_ds1 import preprocess_ds1
 from preprocess_ds2 import preprocess_ds2
-from knn_method import kNN_method_N
-from svm_method import SVM_method_N
-from kde_method import KDE_method_N
+from all_methods import majority_method_N
 import sim_params as pm
 
 if __name__ == "__main__":
@@ -20,6 +18,8 @@ if __name__ == "__main__":
     attributes = pm.attributes
     need_plot = True
 
+    np.random.seed(rng_seed) # set seed for RNG
+
     if DATASET in ["ds2", "DS2", "pmd", "PMD"]:
         preprocess = preprocess_ds2
     else:
@@ -28,11 +28,17 @@ if __name__ == "__main__":
     varsplit = pm.varsplit
 
     p_range = np.arange(pm.p_min, pm.p_max+0.001, pm.p_step)
-    accuracy_p = np.zeros((3, p_range.shape[0]))
+    accuracy_p = np.zeros((4, p_range.shape[0]))
+
+    hparams_list = [{'method':'kNN', 'n_neighbors': pm.n_neighbors},
+                    {'method':'RF', 'n_estimators': pm.n_estimators},
+                    {'method':'SVM', 'C':pm.gamma, 'gamma':pm.gamma},
+                    {'method':'KDE', 'bandwidth':pm.bandwidth}]
 
     to_write = {"DATASET": DATASET, "seed": rng_seed, "N": N, "scope":varsplit, "q": pm.q,
-            "kNN - n_neighbors": pm.n_neighbors, "SVM - kernel":pm.kernel,
-            "SVM - C":pm.C, "SVM - gamma":pm.gamma, "KDE - bandwidth":pm.bandwidth}
+            "kNN - n_neighbors": pm.n_neighbors, "RF - n_estimators": pm.n_estimators,
+            "SVM - kernel":pm.kernel, "SVM - C":pm.C, "SVM - gamma":pm.gamma,
+            "KDE - bandwidth":pm.bandwidth}
 
     for nn, p in enumerate(p_range):
         #x_data, y_data = preprocess_ds1(attributes=attributes, p=p, q=0.1)
@@ -43,9 +49,8 @@ if __name__ == "__main__":
             x_data, y_data = preprocess(attributes=attributes, p=p, q=pm.q)
             spq = "p"
         print("Testing accuracy for {0}={1:.2f}".format(spq, p))
-        accuracy_p[0, nn] = kNN_method_N(x_data, y_data, N, n_neighbors=pm.n_neighbors, n_iters=n_iters)
-        accuracy_p[1, nn] = SVM_method_N(x_data, y_data, N, kernel=pm.kernel, C=pm.C, gamma=pm.gamma, n_iters=n_iters)
-        accuracy_p[2, nn] = KDE_method_N(x_data, y_data, N, bandwidth=pm.bandwidth, n_iters=n_iters)
+        for hh, hparams in enumerate(hparams_list):
+            accuracy_p[hh, nn] = majority_method_N(x_data, y_data, hparams, N, n_iters=n_iters)
 
     results_path = os.path.join(pm.results_dir, "split_pq", str(int(time())))
     if not os.path.exists(results_path):
@@ -58,7 +63,7 @@ if __name__ == "__main__":
 
     if need_plot:
         plt.plot(p_range, np.ones(p_range.shape)/N, '.-', label='naive')
-        methods = ['kNN', 'SVM', 'KDE']
+        methods = ['kNN', 'RF', 'SVM', 'KDE']
         for ii, acc in enumerate(accuracy_p):
             plt.plot(p_range, acc, '.-', label=methods[ii])
         plt.xticks([.1, .2, .3, .4, .5, .6, .7, .8, .9])
