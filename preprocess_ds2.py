@@ -35,16 +35,16 @@ def remove_bad_data(x_data, y_data):
 
 def preprocess_ds2(attributes=['steps', 'calories'], p=0.5, q=-1):
 
-    pmdata_dir = pm.pmdata_dir
+    datapath = pm.datapath_ds2
 
     data_train = []
     data_test = []
 
-    subfolders = [dd[1] for dd in os.walk(pmdata_dir)][0]
+    subfolders = [dd[1] for dd in os.walk(datapath)][0]
     #N = len([subdir in subfolders])
 
     for subdir in subfolders:
-        file = os.path.join(pmdata_dir, subdir, "daily.csv")
+        file = os.path.join(datapath, subdir, "daily.csv")
 
         df = pd.read_csv(file)
         df1, df2 = split_pq(df, p, q)

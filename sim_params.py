@@ -3,26 +3,23 @@ import os
 data_dir = "data"
 results_dir = "results"
 
-pmdata_dir = os.path.join(data_dir, 'pmdata')
-
-filepath1_ds1 = os.path.join(data_dir, "month1.csv")
-filepath2_ds1 = os.path.join(data_dir, "month2.csv")
-
+datapath_ds1 = os.path.join(data_dir, "ds1")
+datapath_ds2 = os.path.join(data_dir, "ds2")
 
 rng_seed = 1164
 n_iters = 1000
 
 # -------------------------------------------------------- #
 
-DATASET = "ds1"
+DATASET = "ds2"
 
 # -------------------------------------------------------- #
 
-N_max = 29
+N_max = 9
 
 # -------------------------------------------------------- #
 
-N = 15
+N = 5
 
 # -------------------------------------------------------- #
 

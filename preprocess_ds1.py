@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import sim_params as pm
+import os
 
 def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=0.5, q=-1):
 
@@ -68,8 +69,9 @@ def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=0.5, q=-1):
 
 def preprocess_ds1(attributes=['steps', 'calories'], p=0.5, q=-1):
 
-    filepath1 = pm.filepath1_ds1
-    filepath2 = pm.filepath2_ds1
+    filepath1 = os.path.join(pm.datapath_ds1, "month1.csv")
+    filepath2 = os.path.join(pm.datapath_ds1, "month2.csv")
+
     df1 = pd.read_csv(filepath1)
     df2 = pd.read_csv(filepath2)
     return preprocess_dfs(df1, df2, attributes=attributes, p=p, q=q)
