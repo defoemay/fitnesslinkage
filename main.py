@@ -25,7 +25,6 @@ if __name__ == "__main__":
     DATASET = pm.DATASET
     N_max = pm.N_max
     rng_seed = pm.rng_seed
-    #p = 0.5
     need_plot = True
 
     np.random.seed(rng_seed) # set random seed

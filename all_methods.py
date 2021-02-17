@@ -2,24 +2,8 @@ import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+from utils import normalize_std
 import os
-
-def normalize_std(x_batch, y, eps=0.1):
-    if len(x_batch[0].shape) > 1 and x_batch[0].shape[0] != 1 and x_batch[0].shape[1] != 1:
-        stddev = np.sqrt(np.diagonal(np.cov(np.transpose(np.concatenate(x_batch)))))
-    else:
-        stddev = np.std(np.concatenate(x_batch))
-    stddev += eps
-    x_batch = [x/stddev for x in x_batch]
-    y = y/stddev
-    return x_batch, y
-
-def normalize_bound(x_batch, y):
-    xmax = np.max(np.concatenate(x_batch), axis=0)
-    xmin = np.min(np.concatenate(x_batch), axis=0)
-    x_batch = [(x-xmin)/(xmax-xmin) for x in x_batch]
-    y = (y-xmin)/(xmax-xmin)
-    return x_batch, y
 
 def model_fn(hparams):
     if hparams['method'] == 'kNN':
@@ -36,7 +20,7 @@ def majority_method_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, 
     assert len(x_data) == len(y_data)
 
     n_correct = 0
-    for i in range(n_iters):
+    for iter in range(n_iters):
         idx = np.random.choice(len(x_data), N, replace=False) # choose N users at random
         j_c = np.random.randint(N) # among those N users, choose 1 at random
 
@@ -81,7 +65,7 @@ def majority_stats_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, e
     p_F = np.zeros(n_iters) # stats of first candidate
     p_S = np.zeros(n_iters) # stats of second candidate
 
-    for i in range(n_iters):
+    for iter in range(n_iters):
         idx = np.random.choice(len(x_data), N, replace=False) # choose N users at random
         x_batch = x_data[idx]
 
@@ -93,11 +77,6 @@ def majority_stats_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, e
             idxc = np.array(list(set(range(len(x_data))) - set(idx)))
             j_c = np.random.choice(idxc, 1)[0]
             y = y_data[j_c]
-
-        #print(idx)
-        #print(j_c)
-        #print(y)
-
 
         if normalize:
             x_batch, y = normalize_std(x_batch, y, eps=eps)
@@ -117,14 +96,14 @@ def majority_stats_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, e
 
         if in_set:
             if len(bincounts) > j_c:
-                p_T[i] = bincounts[j_c]/len(y)
+                p_T[iter] = bincounts[j_c]/len(y)
             else:
-                p_T[i] = 0
-        p_F[i] = bincounts_sorted[0]/len(y)
+                p_T[iter] = 0
+        p_F[iter] = bincounts_sorted[0]/len(y)
         if len(bincounts_sorted) > 1:
-            p_S[i] = bincounts_sorted[1]/len(y)
+            p_S[iter] = bincounts_sorted[1]/len(y)
         else:
-            p_S[i] = 0
+            p_S[iter] = 0
 
     if in_set:
         p_diff_TF = np.abs(p_T - p_F) # difference between actual target and first
@@ -138,8 +117,6 @@ def majority_stats_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, e
         stats = {'p_F':p_F, 'p_S':p_S, 'p_diff_FS':p_diff_FS}
 
     return stats
-
-
 
 if __name__ == '__main__':
     import pandas as pd
