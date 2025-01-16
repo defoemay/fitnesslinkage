@@ -1,9 +1,13 @@
+import os
+
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from utils import normalize_std
-import os
+
+# Local
+from src.utils import normalize_std
+
 
 def model_fn(hparams):
     if hparams['method'] == 'kNN':
@@ -24,8 +28,8 @@ def majority_method_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, 
         idx = np.random.choice(len(x_data), N, replace=False) # choose N users at random
         j_c = np.random.randint(N) # among those N users, choose 1 at random
 
-        x_batch = x_data[idx]
-        y_batch = y_data[idx]
+        x_batch = [x for i, x in enumerate(x_data) if i in idx]
+        y_batch = [y for i, y in enumerate(y_data) if i in idx]
         y = y_batch[j_c]
 
         if normalize:
@@ -44,6 +48,7 @@ def majority_method_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, 
             n_correct += 1
     return n_correct/n_iters
 
+
 def majority_method(x_data, y_data, hparams, N_max=20, n_iters=1000, normalize=True, eps=0.1):
 
     N_range = range(1, N_max+1)
@@ -57,6 +62,7 @@ def majority_method(x_data, y_data, hparams, N_max=20, n_iters=1000, normalize=T
 
     return accuracy
 
+
 def majority_stats_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, eps=0.1, in_set=False):
 
     assert len(x_data) == len(y_data)
@@ -67,11 +73,12 @@ def majority_stats_N(x_data, y_data, hparams, N, n_iters=1000, normalize=True, e
 
     for iter in range(n_iters):
         idx = np.random.choice(len(x_data), N, replace=False) # choose N users at random
-        x_batch = x_data[idx]
+        x_batch = [x for i, x in enumerate(x_data) if i in idx]
 
         if in_set:
             j_c = np.random.randint(N) # among those N users, choose 1 at random
-            y_batch = y_data[idx]
+            y_batch = [x for i, x in enumerate(y_data) if i in idx]
+
             y = y_batch[j_c]
         else:
             idxc = np.array(list(set(range(len(x_data))) - set(idx)))

@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import os
 from time import time
 
-from preprocess_ds1 import preprocess_ds1
-from preprocess_ds2 import preprocess_ds2
-from all_methods import majority_method_N
-import sim_params as pm
+# Local
+from src.preprocess_ds1 import preprocess_ds1
+from src.preprocess_ds2 import preprocess_ds2
+from src.all_methods import majority_method_N
+import src.sim_params as pm
 
 if __name__ == "__main__":
 
@@ -50,6 +51,7 @@ if __name__ == "__main__":
             spq = "p"
         print("Testing accuracy for {0}={1:.2f}".format(spq, p))
         for hh, hparams in enumerate(hparams_list):
+            #print(y_data)
             accuracy_p[hh, nn] = majority_method_N(x_data, y_data, hparams, N, n_iters=n_iters)
 
     results_path = os.path.join(pm.results_dir, "split_pq", str(int(time())))

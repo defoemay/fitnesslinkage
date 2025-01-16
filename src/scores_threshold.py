@@ -1,13 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
-from preprocess_ds1 import preprocess_ds1
-from preprocess_ds2 import preprocess_ds2
 from sklearn.neighbors import KNeighborsClassifier
-from utils import normalize_std
-import sim_params as pm
 import os
 from time import time
+
+# Local
+from src.preprocess_ds1 import preprocess_ds1
+from src.preprocess_ds2 import preprocess_ds2
+import src.sim_params as pm
+from src.utils import normalize_std
+
 
 def scores_threshold_N(x_data, y_data, threshold, N, n_iters=1000, exponent=1, normalize=True, eps=0.1):
 
@@ -20,7 +23,7 @@ def scores_threshold_N(x_data, y_data, threshold, N, n_iters=1000, exponent=1, n
         idx = np.random.choice(len(x_data), N, replace=False) # choose N users at random
         i_c = np.random.choice(len(x_data)) # among those N users, choose 1 at random
 
-        x_batch = x_data[idx]
+        x_batch = [x for i, x in enumerate(x_data) if i in idx]
         y = y_data[i_c]
 
         x_batch, y = normalize_std(x_batch, y, eps=0.1)
