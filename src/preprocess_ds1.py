@@ -1,7 +1,9 @@
+import os
+
 import pandas as pd
 import numpy as np
-import sim_params as pm
-import os
+
+import src.sim_params as pm
 
 def preprocess_dfs(df1, df2, attributes=['steps', 'calories'], p=0.5, q=-1):
 

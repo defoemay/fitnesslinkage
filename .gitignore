@@ -1,12 +1,12 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+**/__pycache__/
 
 # Old code
 oldcode/
 
-# PMData Dataset
-#pmdata/
-#pmdata/*
+
+# Virtual environments
+.venv/
 
 # Jupyter notebooks
 .ipynb_checkpoints

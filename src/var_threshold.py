@@ -1,14 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
-from preprocess_ds1 import preprocess_ds1
-from preprocess_ds2 import preprocess_ds2
 from sklearn.neighbors import KNeighborsClassifier
-from utils import normalize_std
-import sim_params as pm
 import os
 from time import time
-from scores_threshold import scores_threshold_N
+
+# Local
+from src.preprocess_ds1 import preprocess_ds1
+from src.preprocess_ds2 import preprocess_ds2
+import src.sim_params as pm
+from src.scores_threshold import scores_threshold_N
+from src.utils import normalize_std
 
 
 if __name__ == '__main__':

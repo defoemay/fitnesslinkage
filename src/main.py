@@ -5,10 +5,11 @@ from datetime import datetime
 import os
 from time import time
 
-from preprocess_ds1 import preprocess_ds1
-from preprocess_ds2 import preprocess_ds2
-from all_methods import majority_method
-import sim_params as pm
+# Local
+from src.preprocess_ds1 import preprocess_ds1
+from src.preprocess_ds2 import preprocess_ds2
+from src.all_methods import majority_method
+import src.sim_params as pm
 
 
 def test_methods(x_data, y_data, hparams_list, N_max):

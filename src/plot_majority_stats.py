@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import os
 from time import time
 
-from preprocess_ds1 import preprocess_ds1
-from preprocess_ds2 import preprocess_ds2
-from all_methods import majority_stats_N
-import sim_params as pm
+# Local
+from src.preprocess_ds1 import preprocess_ds1
+from src.preprocess_ds2 import preprocess_ds2
+from src.all_methods import majority_stats_N
+import src.sim_params as pm
 
 if __name__ == "__main__":
 
@@ -44,7 +45,7 @@ if __name__ == "__main__":
 
     for hh, hparams in enumerate(hparams_list):
         print("Computing stats for {0} method.".format(hparams['method']))
-        stats_list[hh] = majority_stats_N(x_data, y_data, N, hparams, n_iters=n_iters, normalize=True, eps=0.1)
+        stats_list[hh] = majority_stats_N(x_data, y_data, hparams, N, n_iters=n_iters, normalize=True, eps=0.1)
 
     results_path = os.path.join(pm.results_dir, "majority_stats", str(int(time())))
     if not os.path.exists(results_path):
